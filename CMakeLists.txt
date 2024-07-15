@@ -76,36 +76,36 @@ set(CORE_SRCS
   )
 
 set(ARDUINO_ALL_LIBRARIES
-  ArduinoOTA
+  # ArduinoOTA
   AsyncUDP
-  BLE
-  BluetoothSerial
-  DNSServer
-  EEPROM
-  ESP_I2S
-  ESP_NOW
-  ESP_SR
-  ESPmDNS
-  Ethernet
-  FFat
+  # BLE
+  # BluetoothSerial
+  # DNSServer
+  # EEPROM
+  # ESP_I2S
+  # ESP_NOW
+  # ESP_SR
+  # ESPmDNS
+  # Ethernet
+  # FFat
   FS
   HTTPClient
-  HTTPUpdate
-  Insights
-  LittleFS
-  NetBIOS
+  # HTTPUpdate
+  # Insights
+  # LittleFS
+  # NetBIOS
   Network
   OpenThread
   PPP
   Preferences
-  RainMaker
-  SD_MMC
-  SD
-  SimpleBLE
+  # RainMaker
+  # SD_MMC
+  # SD
+  # SimpleBLE
   SPIFFS
   SPI
   Ticker
-  Update
+  # Update
   USB
   WebServer
   NetworkClientSecure
