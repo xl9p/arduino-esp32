@@ -308,6 +308,21 @@ bool STAClass::begin(bool tryConnect) {
   return true;
 }
 
+bool STAClass::begin(wifi_init_config_t *config, bool tryConnect) {
+  if (!WiFi.enableSTA(config, true)) {
+    log_e("STA enable failed!");
+    return false;
+  }
+  if (!waitStatusBits(ESP_NETIF_STARTED_BIT, 1000)) {
+    log_e("Failed to start STA!");
+    return false;
+  }
+  if (tryConnect) {
+    return connect();
+  }
+  return true;
+}
+
 bool STAClass::end() {
   if (!WiFi.enableSTA(false)) {
     log_e("STA disable failed!");

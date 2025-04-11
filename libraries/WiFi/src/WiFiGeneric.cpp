@@ -273,6 +273,53 @@ bool wifiLowLevelInit(bool persistent) {
   return lowLevelInitDone;
 }
 
+bool wifiLowLevelInit(wifi_init_config_t *cfg, bool persistent) {
+  if (!lowLevelInitDone) {
+    lowLevelInitDone = true;
+    if (!Network.begin()) {
+      lowLevelInitDone = false;
+      return lowLevelInitDone;
+    }
+
+    if (!WiFiGenericClass::useStaticBuffers()) {
+      cfg->static_tx_buf_num = 0;
+      cfg->dynamic_tx_buf_num = 32;
+      cfg->tx_buf_type = 1;
+      cfg->cache_tx_buf_num = 4; // can't be zero!
+      cfg->static_rx_buf_num = 4;
+      cfg->dynamic_rx_buf_num = 32;
+    }
+
+    esp_err_t err = esp_wifi_init(cfg);
+    if (err) {
+      log_e("esp_wifi_init %d", err);
+      lowLevelInitDone = false;
+      return lowLevelInitDone;
+    }
+// Temporary fix to ensure that CDC+JTAG stay on on ESP32-C3
+#if CONFIG_IDF_TARGET_ESP32C3
+    phy_bbpll_en_usb(true);
+#endif
+    if (!persistent) {
+      lowLevelInitDone = esp_wifi_set_storage(WIFI_STORAGE_RAM) == ESP_OK;
+    }
+    if (lowLevelInitDone) {
+      initWiFiEvents();
+      if (esp_netifs[ESP_IF_WIFI_AP] == NULL) {
+        esp_netifs[ESP_IF_WIFI_AP] = esp_netif_create_default_wifi_ap();
+      }
+      if (esp_netifs[ESP_IF_WIFI_STA] == NULL) {
+        esp_netifs[ESP_IF_WIFI_STA] = esp_netif_create_default_wifi_sta();
+      }
+
+      arduino_event_t arduino_event;
+      arduino_event.event_id = ARDUINO_EVENT_WIFI_READY;
+      Network.postEvent(&arduino_event);
+    }
+  }
+  return lowLevelInitDone;
+}
+
 static bool wifiLowLevelDeinit() {
   if (lowLevelInitDone) {
     lowLevelInitDone = false;
@@ -539,6 +586,99 @@ bool WiFiGenericClass::mode(wifi_mode_t m) {
   return true;
 }
 
+bool WiFiGenericClass::mode(wifi_init_config_t *config, wifi_mode_t m) {
+  wifi_mode_t cm = getMode();
+  if (cm == m) {
+    return true;
+  }
+  if (!cm && m) {
+    // Turn ON WiFi
+    if (!wifiLowLevelInit(config, _persistent)) {
+      return false;
+    }
+    Network.onSysEvent(_eventCallback);
+  }
+
+  if (((m & WIFI_MODE_STA) != 0) && ((cm & WIFI_MODE_STA) == 0)) {
+    // we are enabling STA interface
+    WiFi.STA.onEnable();
+  }
+  if (((m & WIFI_MODE_AP) != 0) && ((cm & WIFI_MODE_AP) == 0)) {
+    // we are enabling AP interface
+    WiFi.AP.onEnable();
+  }
+
+  if (cm && !m) {
+    // Turn OFF WiFi
+    if (!espWiFiStop()) {
+      return false;
+    }
+    if ((cm & WIFI_MODE_STA) != 0) {
+      // we are disabling STA interface
+      WiFi.STA.onDisable();
+    }
+    if ((cm & WIFI_MODE_AP) != 0) {
+      // we are disabling AP interface
+      WiFi.AP.onDisable();
+    }
+    Network.removeEvent(_eventCallback);
+    return true;
+  }
+
+  esp_err_t err;
+  if (((m & WIFI_MODE_STA) != 0) && ((cm & WIFI_MODE_STA) == 0)) {
+    err = esp_netif_set_hostname(esp_netifs[ESP_IF_WIFI_STA],
+                                 NetworkManager::getHostname());
+    if (err) {
+      log_e("Could not set hostname! %d", err);
+      return false;
+    }
+  }
+  err = esp_wifi_set_mode(m);
+  if (err) {
+    log_e("Could not set mode! %d", err);
+    return false;
+  }
+
+  if (((m & WIFI_MODE_STA) == 0) && ((cm & WIFI_MODE_STA) != 0)) {
+    // we are disabling STA interface (but AP is ON)
+    WiFi.STA.onDisable();
+  }
+  if (((m & WIFI_MODE_AP) == 0) && ((cm & WIFI_MODE_AP) != 0)) {
+    // we are disabling AP interface (but STA is ON)
+    WiFi.AP.onDisable();
+  }
+
+  if (_long_range) {
+    if (m & WIFI_MODE_STA) {
+      err = esp_wifi_set_protocol(WIFI_IF_STA, WIFI_PROTOCOL_LR);
+      if (err != ESP_OK) {
+        log_e("Could not enable long range on STA! %d", err);
+        return false;
+      }
+    }
+    if (m & WIFI_MODE_AP) {
+      err = esp_wifi_set_protocol(WIFI_IF_AP, WIFI_PROTOCOL_LR);
+      if (err != ESP_OK) {
+        log_e("Could not enable long range on AP! %d", err);
+        return false;
+      }
+    }
+  }
+  if (!espWiFiStart()) {
+    return false;
+  }
+
+#ifdef BOARD_HAS_DUAL_ANTENNA
+  if (!setDualAntennaConfig(ANT1, ANT2, WIFI_RX_ANT_AUTO, WIFI_TX_ANT_AUTO)) {
+    log_e("Dual Antenna Config failed!");
+    return false;
+  }
+#endif
+
+  return true;
+}
+
 /**
  * get WiFi mode
  * @return WiFiMode
@@ -570,6 +710,24 @@ bool WiFiGenericClass::enableSTA(bool enable) {
       return mode((wifi_mode_t)(currentMode | WIFI_MODE_STA));
     }
     return mode((wifi_mode_t)(currentMode & (~WIFI_MODE_STA)));
+  }
+  return true;
+}
+
+/**
+ * control STA mode
+ * @param enable bool
+ * @return ok
+ */
+bool WiFiGenericClass::enableSTA(wifi_init_config_t *config, bool enable) {
+  wifi_mode_t currentMode = getMode();
+  bool isEnabled = ((currentMode & WIFI_MODE_STA) != 0);
+
+  if (isEnabled != enable) {
+    if (enable) {
+      return mode(config, (wifi_mode_t)(currentMode | WIFI_MODE_STA));
+    }
+    return mode(config, (wifi_mode_t)(currentMode & (~WIFI_MODE_STA)));
   }
   return true;
 }

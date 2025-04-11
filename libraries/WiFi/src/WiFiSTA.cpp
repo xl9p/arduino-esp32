@@ -90,6 +90,20 @@ wl_status_t WiFiSTAClass::begin(const char *ssid, const char *passphrase, int32_
   return STA.status();
 }
 
+wl_status_t WiFiSTAClass::begin(wifi_init_config_t *config, const char *ssid,
+                                const char *passphrase, int32_t channel,
+                                const uint8_t *bssid, bool connect) {
+  if (!STA.begin(config)) {
+    return WL_CONNECT_FAILED;
+  }
+
+  if (!STA.connect(ssid, passphrase, channel, bssid, connect)) {
+    return WL_CONNECT_FAILED;
+  }
+
+  return STA.status();
+}
+
 /**
  * Use to connect to SDK config.
  * @return wl_status_t
