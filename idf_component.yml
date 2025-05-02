@@ -87,8 +87,8 @@ dependencies:
   # espressif/esp-modbus:
   #   version: "^1.0.15"
   #   require: public
-  # joltwallet/littlefs:
-  #   version: "^1.10.2"
+  joltwallet/littlefs:
+    version: "^1.10.2"
   # chmorgan/esp-libhelix-mp3:
   #   version: "1.0.3"
   #   require: public

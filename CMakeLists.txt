@@ -80,19 +80,19 @@ set(ARDUINO_ALL_LIBRARIES
   AsyncUDP
   # BLE
   # BluetoothSerial
-  # DNSServer
+  DNSServer
   # EEPROM
   # ESP_I2S
   # ESP_NOW
   # ESP_SR
   # ESPmDNS
-  # Ethernet
+  Ethernet
   # FFat
   FS
   HTTPClient
   # HTTPUpdate
   # Insights
-  # LittleFS
+  LittleFS
   # NetBIOS
   Network
   OpenThread
@@ -100,9 +100,9 @@ set(ARDUINO_ALL_LIBRARIES
   Preferences
   # RainMaker
   # SD_MMC
-  # SD
+  SD
   # SimpleBLE
-  SPIFFS
+  # SPIFFS
   SPI
   Ticker
   # Update
