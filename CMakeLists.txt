@@ -80,44 +80,44 @@ set(CORE_SRCS
   )
 
 set(ARDUINO_ALL_LIBRARIES
-  ArduinoOTA
+  # ArduinoOTA
   AsyncUDP
-  BLE
-  BluetoothSerial
+  # BLE
+  # BluetoothSerial
   DNSServer
-  EEPROM
-  ESP_I2S
-  ESP_NOW
-  ESP_SR
-  ESPmDNS
+  # EEPROM
+  # ESP_I2S
+  # ESP_NOW
+  # ESP_SR
+  # ESPmDNS
   Ethernet
-  FFat
+  # FFat
   FS
   HTTPClient
-  HTTPUpdate
-  Insights
+  # HTTPUpdate
+  # Insights
   LittleFS
-  Matter
-  NetBIOS
+  # Matter
+  # NetBIOS
   Network
   OpenThread
   PPP
   Preferences
-  RainMaker
-  SD_MMC
+  # RainMaker
+  # SD_MMC
   SD
-  SimpleBLE
-  SPIFFS
+  # SimpleBLE
+  # SPIFFS
   SPI
   Ticker
-  Update
+  # Update
   USB
   WebServer
   NetworkClientSecure
   WiFi
-  WiFiProv
+  # WiFiProv
   Wire
-  Zigbee
+  # Zigbee
   )
 
 set(ARDUINO_LIBRARY_ArduinoOTA_SRCS libraries/ArduinoOTA/src/ArduinoOTA.cpp)
