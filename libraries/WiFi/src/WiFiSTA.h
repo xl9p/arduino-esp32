@@ -48,6 +48,7 @@ public:
   ~STAClass();
 
   bool begin(bool tryConnect = false);
+  bool begin(wifi_init_config_t *config, bool tryConnect = false);
   bool end();
 
   bool bandwidth(wifi_bandwidth_t bandwidth);
@@ -135,6 +136,15 @@ public:
     return begin(ssid.c_str(), passphrase.c_str(), channel, bssid, connect);
   }
   wl_status_t begin();
+
+  wl_status_t
+    begin(wifi_init_config_t *config, const char *ssid, const char *passphrase = NULL, int32_t channel = 0, const uint8_t *bssid = NULL, bool connect = true);
+  wl_status_t begin(
+    wifi_init_config_t *config, const String &ssid, const String &passphrase = (const char *)NULL, int32_t channel = 0, const uint8_t *bssid = NULL,
+    bool connect = true
+  ) {
+    return begin(config, ssid.c_str(), passphrase.c_str(), channel, bssid, connect);
+  }
 
   // also accepts Arduino ordering of parameters: ip, dns, gw, mask
   bool config(IPAddress local_ip, IPAddress gateway, IPAddress subnet, IPAddress dns1 = (uint32_t)0x00000000, IPAddress dns2 = (uint32_t)0x00000000);

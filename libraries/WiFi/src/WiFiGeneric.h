@@ -99,9 +99,11 @@ public:
   void enableLongRange(bool enable);
 
   static bool mode(wifi_mode_t);
+  static bool mode(wifi_init_config_t *config, wifi_mode_t);
   static wifi_mode_t getMode();
 
   bool enableSTA(bool enable);
+  bool enableSTA(wifi_init_config_t *config, bool enable);
   bool enableAP(bool enable);
 
   bool setSleep(bool enabled);
