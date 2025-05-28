@@ -195,6 +195,11 @@ esp_err_t i2cDeinit(uint8_t i2c_num) {
 #if !CONFIG_DISABLE_HAL_LOCKS
   //release lock
   xSemaphoreGive(bus[i2c_num].lock);
+
+    // !MODIFIED
+  vSemaphoreDelete(bus[i2c_num].lock);
+  bus[i2c_num].lock = NULL;
+    // !------------------------------------------
 #endif
   return err;
 }
