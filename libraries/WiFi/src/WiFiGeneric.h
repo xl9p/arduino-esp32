@@ -39,6 +39,7 @@
 #if CONFIG_NETWORK_PROV_NETWORK_TYPE_WIFI
 #include "network_provisioning/manager.h"
 #endif
+#include "esp_wifi.h"
 #include "lwip/ip_addr.h"
 
 #include "Network.h"

@@ -352,12 +352,12 @@ bool wifiLowLevelInit(wifi_init_config_t *cfg, bool persistent) {
     }
 
     if (!WiFiGenericClass::useStaticBuffers()) {
-      cfg.static_tx_buf_num = 0;
-      cfg.dynamic_tx_buf_num = 32;
-      cfg.tx_buf_type = 1;
-      cfg.cache_tx_buf_num = 4;  // can't be zero!
-      cfg.static_rx_buf_num = 4;
-      cfg.dynamic_rx_buf_num = 32;
+      cfg->static_tx_buf_num = 0;
+      cfg->dynamic_tx_buf_num = 32;
+      cfg->tx_buf_type = 1;
+      cfg->cache_tx_buf_num = 4;  // can't be zero!
+      cfg->static_rx_buf_num = 4;
+      cfg->dynamic_rx_buf_num = 32;
     }
 
     esp_err_t err = esp_wifi_init(cfg);
