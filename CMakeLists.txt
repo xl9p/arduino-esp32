@@ -80,44 +80,44 @@ set(CORE_SRCS
   )
 
 set(ARDUINO_ALL_LIBRARIES
-  # ArduinoOTA
+  ArduinoOTA
   AsyncUDP
-  # BLE
-  # BluetoothSerial
+  BLE
+  BluetoothSerial
   DNSServer
-  # EEPROM
-  # ESP_I2S
-  # ESP_NOW
-  # ESP_SR
-  # ESPmDNS
+  EEPROM
+  ESP_I2S
+  ESP_NOW
+  ESP_SR
+  ESPmDNS
   Ethernet
-  # FFat
+  FFat
   FS
   HTTPClient
-  # HTTPUpdate
-  # Insights
+  HTTPUpdate
+  Insights
   LittleFS
-  # Matter
-  # NetBIOS
+  Matter
+  NetBIOS
   Network
   OpenThread
   PPP
   Preferences
-  # RainMaker
-  # SD_MMC
+  RainMaker
+  SD_MMC
   SD
-  # SimpleBLE
-  # SPIFFS
+  SimpleBLE
+  SPIFFS
   SPI
   Ticker
-  # Update
+  Update
   USB
   WebServer
   NetworkClientSecure
   WiFi
-  # WiFiProv
+  WiFiProv
   Wire
-  # Zigbee
+  Zigbee
   )
 
 set(ARDUINO_LIBRARY_ArduinoOTA_SRCS libraries/ArduinoOTA/src/ArduinoOTA.cpp)
@@ -359,7 +359,7 @@ endforeach()
 set(includedirs variants/${CONFIG_ARDUINO_VARIANT}/ cores/esp32/ ${ARDUINO_LIBRARIES_INCLUDEDIRS})
 set(srcs ${CORE_SRCS} ${ARDUINO_LIBRARIES_SRCS})
 set(priv_includes cores/esp32/libb64)
-set(requires spi_flash esp_partition mbedtls wpa_supplicant esp_adc esp_eth http_parser esp_ringbuf esp_driver_gptimer esp_driver_usb_serial_jtag esp_netif driver)
+set(requires spi_flash esp_partition mbedtls wpa_supplicant esp_adc esp_eth http_parser esp_ringbuf esp_driver_gptimer esp_driver_usb_serial_jtag driver)
 set(priv_requires fatfs nvs_flash app_update spiffs bootloader_support bt esp_hid usb esp_psram ${ARDUINO_LIBRARIES_REQUIRES})
 
 if(NOT CONFIG_ARDUINO_SELECTIVE_COMPILATION OR CONFIG_ARDUINO_SELECTIVE_OpenThread)
