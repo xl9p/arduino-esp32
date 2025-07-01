@@ -66,8 +66,8 @@ dependencies:
   #   rules:
   #     - if: "target != esp32c2"
   # RainMaker Start (Fixed versions, because Matter supports only Insights 1.0.1)
-  espressif/network_provisioning:
-    version: "1.0.2"
+  # espressif/network_provisioning:
+  #   version: "1.0.2"
   # espressif/esp_rainmaker:
   #   version: "1.5.2"
   #   rules:
@@ -116,8 +116,8 @@ dependencies:
   # espressif/esp-modbus:
   #   version: "^1.0.15"
   #   require: public
-  joltwallet/littlefs:
-    version: "^1.10.2"
+  # joltwallet/littlefs:
+  #   version: "^1.10.2"
   # chmorgan/esp-libhelix-mp3:
   #   version: "1.0.3"
   #   require: public
